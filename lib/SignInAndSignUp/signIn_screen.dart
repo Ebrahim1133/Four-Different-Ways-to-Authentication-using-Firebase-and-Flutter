@@ -11,6 +11,7 @@ import 'package:testauth/moduls/auth_cubit/auth_cubit.dart';
 // ignore: must_be_immutable
 class SignInScreen extends StatelessWidget {
   TextEditingController emailcontroller = TextEditingController();
+  TextEditingController phonenumber = TextEditingController();
   TextEditingController passwordcontroller = TextEditingController();
 
   @override
@@ -93,6 +94,30 @@ class SignInScreen extends StatelessWidget {
                         SizedBox(
                           width: 375,
                           child: TextFormField(
+                            controller: phonenumber,
+                            keyboardType: TextInputType.phone,
+                            decoration: InputDecoration(
+                              hintText: 'Phone Number',
+                              prefixIcon: Icon(Icons.email),
+                              hintStyle: TextStyle(color: HexColor('#1848fd')),
+                              fillColor: Colors.white,
+                              filled: true,
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(35),
+                                  borderSide: BorderSide(color: Colors.white)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(35),
+                                  borderSide: BorderSide(
+                                      color: HexColor('#9fcdfc'), width: 2)),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        SizedBox(
+                          width: 375,
+                          child: TextFormField(
                             controller: passwordcontroller,
                             keyboardType: TextInputType.visiblePassword,
                             obscureText: true,
@@ -112,24 +137,24 @@ class SignInScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Container(
-                          alignment: Alignment.bottomRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: TextButton(
-                              child: Text(
-                                'Forget password ?',
-                                style: TextStyle(
-                                    color: HexColor('#304a59'),
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              onPressed: () {},
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
+                        // Container(
+                        //   alignment: Alignment.bottomRight,
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.only(right: 5.0),
+                        //     child: TextButton(
+                        //       child: Text(
+                        //         'Forget password ?',
+                        //         style: TextStyle(
+                        //             color: HexColor('#304a59'),
+                        //             fontWeight: FontWeight.bold),
+                        //       ),
+                        //       onPressed: () {},
+                        //     ),
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 30,
+                        // ),
                         Container(
                           height: 60,
                           width: 250,
@@ -155,7 +180,34 @@ class SignInScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(
-                          height: 50,
+                          height: 10,
+                        ),
+                        Container(
+                          height: 60,
+                          width: 250,
+                          decoration: BoxDecoration(
+                              color: HexColor('#0148a4'),
+                              borderRadius: BorderRadius.circular(35)),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(35),
+                            child: MaterialButton(
+                              minWidth: 250,
+                              onPressed: () async{
+                                await  AuthCubit.get(context).verifyPhoneNumber(phoneNumber: phonenumber.text,context: context);
+
+                              },
+                              child: Text(
+                                'LOG IN With Phone',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
                         ),
                         Text(
                           'Or connect using',
@@ -200,7 +252,7 @@ class SignInScreen extends StatelessWidget {
                           ],
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

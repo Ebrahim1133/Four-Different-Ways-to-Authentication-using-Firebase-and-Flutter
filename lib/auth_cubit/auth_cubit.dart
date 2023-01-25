@@ -12,13 +12,18 @@ import 'package:meta/meta.dart';
 import 'package:testauth/moduls/SignInAndSignUp/home_screen.dart';
 import 'package:testauth/moduls/SignInAndSignUp/signIn_screen.dart';
 
+import '../SignInAndSignUp/verfiy_otp_screen.dart';
+
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
+
   static AuthCubit get(context) => BlocProvider.of(context);
   final FirebaseAuth _auth = FirebaseAuth.instance;
   get user => _auth.currentUser;
+
+  String verify= '';
 
 
    void signInWithGoogle({required BuildContext context}) async {
@@ -123,6 +128,46 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthError(e.message.toString()));
     }
   }
+  Future  verifyPhoneNumber({required String phoneNumber,required BuildContext context}) async {
+    emit(AuthLoading());
+
+    try {
+      await _auth.verifyPhoneNumber(phoneNumber: phoneNumber,verificationCompleted: (PhoneAuthCredential credential){}, verificationFailed: (FirebaseAuthException e){}, codeSent: (String verificationId,int? resendToken){
+
+        verify = verificationId;
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+                builder: (_) => MyVerify()));
+
+        emit(AuthSuccessful());
+
+
+      }, codeAutoRetrievalTimeout: (String verificationId){});
+
+
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(e.message.toString()));
+    }
+  }
+  Future  signInWihtPhoneNumber({required String code,required String verificationId,required BuildContext context}) async {
+    emit(AuthLoading());
+
+    try {
+      PhoneAuthCredential  credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: code);
+      await _auth.signInWithCredential(credential);
+
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+              builder: (_) => HomeScreen()));
+      emit(AuthSuccessful());
+
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(e.message.toString()));
+    }
+  }
+
+
+
   void signInWithFacebook({required BuildContext context}) async {
     try {
       emit(AuthLoading());
